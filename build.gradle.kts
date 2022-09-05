@@ -4,8 +4,8 @@ plugins {
     kotlin("jvm") version "1.7.10"
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "com.gorodmi"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
