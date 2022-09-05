@@ -1,10 +1,6 @@
 import arc.files.Fi
 import arc.graphics.Color
 import arc.graphics.PixmapIO
-import arc.util.Timer
-import arc.util.Timer.Task
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 import kotlin.math.max
 
 fun main(args: Array<String>) {
