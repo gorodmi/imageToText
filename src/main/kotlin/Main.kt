@@ -11,29 +11,35 @@ fun main(args: Array<String>) {
     }
     val path = args[0]
     val out = args[1]
-    val size = args[2].toInt()
-
     val input = PixmapIO.readPNG(Fi(path))
     val output = Fi(out)
-
-    val div = input.width / input.height.toDouble()
-    val xAdd = max(1.0, input.getWidth() / size.toDouble())
-    val yAdd = max(1.0, input.getHeight() / size.toDouble()) * div
+    var size = 50
     var str = ""
-    var last: Int? = null
-    val color = Color()
-    for (y in 0 until (size / div).toInt()) {
-        for (x in 0 until size) {
-            color.set(input.get(((x + 0.5) * xAdd).toInt(), ((y + 0.5) * yAdd).toInt()))
-            if (last != color.rgba8888()) str += "[#$color]"
-            str += "\uF8ED" // salt emoji
-            last = color.rgba8888()
+    while (size > 0) {
+        println("trying size $size")
+        val div = input.width / input.height.toDouble() * 2
+        val xAdd = input.getWidth() / size.toDouble()
+        val yAdd = input.getHeight() / size.toDouble() * div
+        str = ""
+        var last: AnsiColor? = null
+        val color = Color()
+        for (y in 0 until (size / div).toInt()) {
+            for (x in 0 until size) {
+                color.set(input.get((x * xAdd).toInt(), (y * yAdd).toInt()))
+                val ansi = AnsiColor.closest(color)
+                if (last != ansi) str += ansi
+                str += if (ansi.background) " " else "█"
+                last = ansi
+            }
+            str += "\n"
         }
-        str += "\\n"
+        if (str.isNotEmpty()) str = str.substring(0, str.length - 1)
+        str = "```ansi\n$str```"
+        if (str.length < 2000) break
+        size--
     }
-    if (str.isNotEmpty()) str = str.substring(0, str.length - 2)
-    println("${str.length} length (${if (str.length > 15000) "will prob crash" else "should work"})")
     output.writeString(str)
-    output.writeString("\nfor discord:\n", true)
-    output.writeString(str.replace("(.{1800})".toRegex(), "$1\n"), true)
+    println("found size $size")
+//    output.writeString("\nfor discord:\n", true)
+//    output.writeString(str.replace("(.{1800})".toRegex(), "$1\n"), true)
 }
